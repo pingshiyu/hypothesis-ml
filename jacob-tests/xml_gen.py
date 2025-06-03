@@ -1,13 +1,22 @@
 from hypothesis import strategies as st, given, settings
 from hypothesis.internal.conjecture.providers import AVAILABLE_PROVIDERS
 import ml_provider
+import my_provider
 
-AVAILABLE_PROVIDERS["my_provider"] = "ml_provider.MyProvider" 
+AVAILABLE_PROVIDERS["my_provider"] = "my_provider.MyProvider" 
 AVAILABLE_PROVIDERS["bytestring"] = "ml_provider.CustomBytestringProvider"
 
-# settings.register_profile("own_provider", backend="my_provider", database=None, max_examples=2, derandomize=True)
-settings.register_profile("bytestring", backend="bytestring", backend_kwargs={}, database=None, max_examples=1, derandomize=True)
+INPUT_BYTE_STRING = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1])
+settings.register_profile("own_provider", backend="my_provider", database=None, max_examples=2, derandomize=True)
 # settings.load_profile("own_provider")
+
+settings.register_profile(
+    "bytestring", 
+    backend="bytestring", 
+    backend_kwargs={"input_bytes": INPUT_BYTE_STRING}, 
+    database=None, 
+    max_examples=1, 
+    derandomize=True)
 settings.load_profile("bytestring")
 
 # generator for square integers

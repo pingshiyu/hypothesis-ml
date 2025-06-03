@@ -6,7 +6,7 @@ from hypothesis.internal.conjecture.providers import HypothesisProvider, Bytestr
 from partition_tree import PNode
 
 # one million zeros
-ZERO_BYTE_STRING = bytearray([1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1])
+ZERO_BYTE_STRING = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1])
 
 # TODO: make a provider the same as the BytestringProvider but has a specified bytestring
 # TODO: make it fix the bytestring to a certain value, to check that things work
@@ -23,13 +23,6 @@ class CustomBytestringProvider(BytestringProvider):
         self.partitions = PNode()
         self.current_partition = self.partitions
         self.verbose = verbose
-        
-# class MyProvider(HypothesisProvider):
-# 
-#     def __init__(self, conjecturedata: Optional["ConjectureData"], /):
-#         super().__init__(conjecturedata)
-#         self.partitions = PNode()
-#         self.current_partition = self.partitions
 
     def span_start(self, label, /):
         self.current_partition = self.current_partition.down(label)
