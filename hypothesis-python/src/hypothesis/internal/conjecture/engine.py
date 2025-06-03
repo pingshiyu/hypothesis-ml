@@ -152,7 +152,9 @@ class RunIsComplete(Exception):
     pass
 
 
-def _get_provider(backend: str) -> Union[type, PrimitiveProvider]:
+def _get_provider(
+        backend: str
+    ) -> Union[type, PrimitiveProvider]:
     mname, cname = AVAILABLE_PROVIDERS[backend].rsplit(".", 1)
     provider_cls = getattr(importlib.import_module(mname), cname)
     if provider_cls.lifetime == "test_function":
@@ -1407,6 +1409,7 @@ class ConjectureRunner:
             prefix=prefix,
             observer=observer,
             provider=provider,
+            provider_kw=self.settings.backend_kwargs,
             max_choices=max_choices,
             random=self.random,
         )

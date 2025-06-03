@@ -363,7 +363,6 @@ def _validate_backend(backend: str) -> str:
         )
     return backend
 
-
 class settingsMeta(type):
     def __init__(cls, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -501,7 +500,11 @@ class settings(metaclass=settingsMeta):
             if backend is not_set  # type: ignore
             else _validate_backend(backend)
         )
-        self.backend_kwargs = backend_kwargs
+        self.backend_kwargs = (
+            {} 
+            if backend_kwargs is not_set
+            else backend_kwargs
+        )
 
         self._in_definition = False
 
