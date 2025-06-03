@@ -58,6 +58,7 @@ all_settings: list[str] = [
     "deadline",
     "print_blob",
     "backend",
+    "backend_kwargs"
 ]
 
 
@@ -427,6 +428,7 @@ class settings(metaclass=settingsMeta):
         deadline: Union[int, float, datetime.timedelta, None] = not_set,  # type: ignore
         print_blob: bool = not_set,  # type: ignore
         backend: str = not_set,  # type: ignore
+        backend_kwargs: dict[str, Any] = not_set # type: ignore
     ) -> None:
         self._in_definition = True
 
@@ -499,6 +501,7 @@ class settings(metaclass=settingsMeta):
             if backend is not_set  # type: ignore
             else _validate_backend(backend)
         )
+        self.backend_kwargs = backend_kwargs
 
         self._in_definition = False
 
