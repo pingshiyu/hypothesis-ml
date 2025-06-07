@@ -1342,6 +1342,8 @@ class StateForActualGivenExecution:
         for falsifying_example in self.falsifying_examples:
             fragments = []
 
+            # don't shrink if we have backend kwargs
+            runner._switch_to_hypothesis_provider = False if runner.settings.backend_kwargs else runner._switch_to_hypothesis_provider
             ran_example = runner.new_conjecture_data(
                 falsifying_example.choices, max_choices=len(falsifying_example.choices)
             )
