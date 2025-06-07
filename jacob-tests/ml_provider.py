@@ -1,16 +1,16 @@
 from typing import Optional
 from hypothesis import strategies as st, given, settings
+from hypothesis._settings import Phase
 from hypothesis.core import ConjectureData
-from hypothesis.internal.conjecture.providers import HypothesisProvider, BytestringProvider
+from hypothesis.internal.conjecture.providers import BytestringProvider, AVAILABLE_PROVIDERS
 
 from partition_tree import PNode
 
-# one million zeros
-ZERO_BYTE_STRING = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1])
+AVAILABLE_PROVIDERS["bytestring"] = "ml_provider.CustomBytestringProvider"
 
-# TODO: make a provider the same as the BytestringProvider but has a specified bytestring
-# TODO: make it fix the bytestring to a certain value, to check that things work
-# TODO: then add a seeting to settings, perhaps, to adjust the bytestring
+# one million zeros
+ZERO_BYTE_STRING = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+
 class CustomBytestringProvider(BytestringProvider):
     def __init__(
         self, 
@@ -71,8 +71,11 @@ class CustomBytestringProvider(BytestringProvider):
             print(f"draw_boolean({p}) = {drawn}")
         self.current_partition.add_value(drawn)
         return drawn
-
-@given(st.integers())
-# @settings(backend="my_provider", database=None)
-def f(n):
-    pass
+    
+def run_with_prng(prng: bytearray, test):
+    return settings(
+        backend="bytestring", 
+        backend_kwargs={"input_bytes": prng}, 
+        phases=[Phase.generate], 
+        max_examples=1, 
+        derandomize=True)(test)()

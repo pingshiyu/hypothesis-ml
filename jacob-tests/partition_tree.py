@@ -38,7 +38,7 @@ class PNode:
         # if label provided, check for duplicate with parent
         # this rules the case where a second label is used again 
         if label:
-            labelled_children = {n.label : n for n in self.children}
+            labelled_children = {n.label : n for n in self.children if isinstance(n, PNode)}
             if label == self.label:
                 print(f"repeat label called: {label}")
                 return self
