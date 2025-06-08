@@ -795,7 +795,13 @@ class settings(metaclass=settingsMeta):
             )
 
         _test._hypothesis_internal_use_settings = self
-        _test._hypothesis_internal_settings_applied = True
+        # no need for this restriction in our version of the code: this check
+        # seems to be specific for the hypothesis framework only in order to rule out
+        # applying multiple settings to one test function. but we would like to alter 
+        # the settings to the same test function.
+        # Do change the below if some unforeseen bugs are caused by this for our use
+        # case. We then need a smarter way to sidestep this check.
+        # _test._hypothesis_internal_settings_applied = True
         return test
 
     def __setattr__(self, name: str, value: object) -> None:
