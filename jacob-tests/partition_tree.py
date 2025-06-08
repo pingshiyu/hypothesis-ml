@@ -48,7 +48,7 @@ class PNode:
                 print(f"repeat label called: {label}")
                 return self
             elif label in labelled_children.keys():
-                print(f"repeated label of child called: {label}")
+                # print(f"repeated label of child called: {label}")
                 return labelled_children[label]
         subtree = PNode(self, label, [])
         self.children.append(subtree)

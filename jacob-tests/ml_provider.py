@@ -47,11 +47,8 @@ class CustomBytestringProvider(BytestringProvider):
             self.show_state()
         if self.current_partition.parent is None:
             # print the partition if we finished construction the tree (when we close out the final level)
-            self.show_state()
-            # self.partitions._reset()
-            # self.current_partition = self.partitions
-            # print(f"### clear attempted.")
-            # self.show_state()
+            print("associated generation tree:")
+            print(self.partitions)
             self.start_fresh = True
 
     def draw_integer(self, *args, **kwargs):
