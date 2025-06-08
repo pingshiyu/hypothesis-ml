@@ -36,6 +36,9 @@ class CustomBytestringProvider(BytestringProvider):
         if self.verbose:
             print("span_end")
             print(f"{self.partitions}")
+        if self.current_partition.parent is None:
+            # print the partition if we finished construction the tree (when we close out the final level)
+            print(f"{self.partitions}")
 
     def draw_integer(self, *args, **kwargs):
         drawn = super().draw_integer(*args, **kwargs)
@@ -75,7 +78,7 @@ class CustomBytestringProvider(BytestringProvider):
 def run_with_prng(prng: bytearray, test):
     return settings(
         backend="bytestring", 
-        backend_kwargs={"input_bytes": prng}, 
+        backend_kwargs={"input_bytes": prng, "verbose": False}, 
         phases=[Phase.generate], 
         max_examples=1, 
         derandomize=True)(test)()

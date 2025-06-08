@@ -56,9 +56,10 @@ def test_card_info(info):
 if __name__ == '__main__':
     zero = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     one = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,100])
-    verylong = bytearray([1] * 100000)
+    verylong = bytearray([1] * 50)
+    verylongz = bytearray([0] * 50)
     run_with_prng(verylong, test_card_info)
-
+    run_with_prng(verylongz, test_card_info)
     # set_prng(one)
     # test_square_int()
     # test_card_info()
