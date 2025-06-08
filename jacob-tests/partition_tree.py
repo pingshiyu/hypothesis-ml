@@ -32,6 +32,11 @@ class PNode:
         self.parent = parent
         self.children = children
         self.label = label
+
+    def _reset(self):
+        self.parent = None
+        self.children = []
+        self.label = None
     
     def down(self, label : Optional[int] = None) -> PNode:
         # go down a level. 

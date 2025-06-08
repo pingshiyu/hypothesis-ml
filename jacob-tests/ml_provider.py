@@ -20,65 +20,76 @@ class CustomBytestringProvider(BytestringProvider):
         verbose: bool = True
         ):
         super().__init__(conjecturedata, bytestring=input_bytes)
+        self.verbose = verbose
         self.partitions = PNode()
         self.current_partition = self.partitions
-        self.verbose = verbose
+
+    def show_state(self):
+        print(f"overall:\n{self.partitions}\n")
+        print(f"current:\n{self.current_partition}\n")
 
     def span_start(self, label, /):
         self.current_partition = self.current_partition.down(label)
         if self.verbose:
-            print("span_start", label)
-            print(f"{self.partitions}")
-            print(f"current: {self.current_partition}")
+            print("## span_start", label)
+            self.show_state()
 
     def span_end(self, discard, /):
         self.current_partition = self.current_partition.up()
         if self.verbose:
-            print("span_end")
-            print(f"{self.partitions}")
+            print("## span_end")
+            self.show_state()
         if self.current_partition.parent is None:
             # print the partition if we finished construction the tree (when we close out the final level)
-            print(f"{self.partitions}")
+            self.partitions._reset()
+            self.current_partition = self.partitions
+            print(f"### clear attempted.")
+            self.show_state()
 
     def draw_integer(self, *args, **kwargs):
         drawn = super().draw_integer(*args, **kwargs)
-        if self.verbose:
-            print(f"draw_integer({args} {kwargs}) = {drawn}")
         self.current_partition.add_value(drawn)
+        if self.verbose:
+            print(f"## draw_integer({args} {kwargs}) = {drawn}")
+            self.show_state()
         return drawn
 
     def draw_string(self, intervals, *, min_size = 0, max_size = ...):
         drawn = super().draw_string(intervals, min_size=min_size, max_size=max_size)
-        if self.verbose:
-            print(f"draw_string({intervals}, {min_size}, {max_size}) = {drawn}")
         self.current_partition.add_value(drawn)
+        if self.verbose:
+            print(f"## draw_string({intervals}, {min_size}, {max_size}) = {drawn}")
+            self.show_state()
         return drawn
 
     def draw_bytes(self, intervals, *, min_size = 0, max_size = ...):
         drawn = super().draw_bytes(intervals, min_size=min_size, max_size=max_size)
-        if self.verbose:
-            print(f"draw_bytes({intervals} {min_size} {max_size}) = {drawn}")
         self.current_partition.add_value(drawn)
+        if self.verbose:
+            print(f"## draw_bytes({intervals} {min_size} {max_size}) = {drawn}")
+            self.show_state()
         return drawn
 
     def draw_float(self, *args, **kwargs):
         drawn = super().draw_float(*args, **kwargs)
-        if self.verbose:
-            print(f"draw_float({args} {kwargs}) = {drawn}")
         self.current_partition.add_value(drawn)
+        if self.verbose:
+            print(f"## draw_float({args} {kwargs}) = {drawn}")
+            self.show_state()
         return drawn
 
     def draw_boolean(self, p = 0.5):
         drawn = super().draw_boolean(p)
-        if self.verbose:
-            print(f"draw_boolean({p}) = {drawn}")
         self.current_partition.add_value(drawn)
+        if self.verbose:
+            print(f"## draw_boolean({p}) = {drawn}")
+            self.show_state()
         return drawn
     
 def run_with_prng(prng: bytearray, test):
     return settings(
         backend="bytestring", 
-        backend_kwargs={"input_bytes": prng, "verbose": False}, 
+        backend_kwargs={"input_bytes": prng, "verbose": True}, 
         phases=[Phase.generate], 
         max_examples=1, 
         derandomize=True)(test)()
