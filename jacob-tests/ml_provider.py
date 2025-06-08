@@ -23,12 +23,18 @@ class CustomBytestringProvider(BytestringProvider):
         self.verbose = verbose
         self.partitions = PNode()
         self.current_partition = self.partitions
+        self.start_fresh = True
 
     def show_state(self):
         print(f"overall:\n{self.partitions}\n")
         print(f"current:\n{self.current_partition}\n")
 
     def span_start(self, label, /):
+        if self.start_fresh:
+            print("## starting fresh.")
+            self.partitions._reset()
+            self.current_partition = self.partitions
+            self.start_fresh = False
         self.current_partition = self.current_partition.down(label)
         if self.verbose:
             print("## span_start", label)
@@ -41,10 +47,12 @@ class CustomBytestringProvider(BytestringProvider):
             self.show_state()
         if self.current_partition.parent is None:
             # print the partition if we finished construction the tree (when we close out the final level)
-            self.partitions._reset()
-            self.current_partition = self.partitions
-            print(f"### clear attempted.")
             self.show_state()
+            # self.partitions._reset()
+            # self.current_partition = self.partitions
+            # print(f"### clear attempted.")
+            # self.show_state()
+            self.start_fresh = True
 
     def draw_integer(self, *args, **kwargs):
         drawn = super().draw_integer(*args, **kwargs)
@@ -89,7 +97,7 @@ class CustomBytestringProvider(BytestringProvider):
 def run_with_prng(prng: bytearray, test):
     return settings(
         backend="bytestring", 
-        backend_kwargs={"input_bytes": prng, "verbose": True}, 
+        backend_kwargs={"input_bytes": prng, "verbose": False}, 
         phases=[Phase.generate], 
         max_examples=1, 
         derandomize=True)(test)()
