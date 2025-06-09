@@ -23,18 +23,27 @@ class CustomBytestringProvider(BytestringProvider):
         self.verbose = verbose
         self.partitions = PNode()
         self.current_partition = self.partitions
+        self.observed_bytearray_idx = 0
         self.start_fresh = True
 
     def show_state(self):
         print(f"overall:\n{self.partitions}\n")
         print(f"current:\n{self.current_partition}\n")
 
+    def reset_state(self):
+        print("## starting fresh.")
+        self.partitions._reset()
+        self.current_partition = self.partitions
+        self.observed_bytearray_idx = 0
+        self.start_fresh = False
+
+    def record_value(self):
+        self.current_partition.add_value(list(self.drawn[self.observed_bytearray_idx:]))
+        self.observed_bytearray_idx = len(self.drawn) - 1
+
     def span_start(self, label, /):
         if self.start_fresh:
-            print("## starting fresh.")
-            self.partitions._reset()
-            self.current_partition = self.partitions
-            self.start_fresh = False
+            self.reset_state()
         self.current_partition = self.current_partition.down(label)
         if self.verbose:
             print("## span_start", label)
@@ -53,41 +62,47 @@ class CustomBytestringProvider(BytestringProvider):
 
     def draw_integer(self, *args, **kwargs):
         drawn = super().draw_integer(*args, **kwargs)
-        self.current_partition.add_value(drawn)
+        self.record_value()
         if self.verbose:
             print(f"## draw_integer({args} {kwargs}) = {drawn}")
+            print(f"#### drawn: {self.drawn}")
             self.show_state()
+
         return drawn
 
     def draw_string(self, intervals, *, min_size = 0, max_size = ...):
         drawn = super().draw_string(intervals, min_size=min_size, max_size=max_size)
-        self.current_partition.add_value(drawn)
+        self.record_value()
         if self.verbose:
             print(f"## draw_string({intervals}, {min_size}, {max_size}) = {drawn}")
+            print(f"#### drawn: {self.drawn}")
             self.show_state()
         return drawn
 
     def draw_bytes(self, intervals, *, min_size = 0, max_size = ...):
         drawn = super().draw_bytes(intervals, min_size=min_size, max_size=max_size)
-        self.current_partition.add_value(drawn)
+        self.record_value()
         if self.verbose:
             print(f"## draw_bytes({intervals} {min_size} {max_size}) = {drawn}")
+            print(f"#### drawn: {self.drawn}")
             self.show_state()
         return drawn
 
     def draw_float(self, *args, **kwargs):
         drawn = super().draw_float(*args, **kwargs)
-        self.current_partition.add_value(drawn)
+        self.record_value()
         if self.verbose:
             print(f"## draw_float({args} {kwargs}) = {drawn}")
+            print(f"#### drawn: {self.drawn}")
             self.show_state()
         return drawn
 
     def draw_boolean(self, p = 0.5):
         drawn = super().draw_boolean(p)
-        self.current_partition.add_value(drawn)
+        self.record_value()
         if self.verbose:
             print(f"## draw_boolean({p}) = {drawn}")
+            print(f"#### drawn: {self.drawn}")
             self.show_state()
         return drawn
     
