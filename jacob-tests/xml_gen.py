@@ -56,7 +56,7 @@ def test_card_info(info):
 if __name__ == '__main__':
     zero = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     one = bytearray([0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,100])
-    verylong = bytearray([0] * 20 + [1] * 30)
+    verylong = bytearray([0] * 10 + [1] * 40)
     verylongz = bytearray([0] * 50)
     verylongo = bytearray([1] * 50)
     run_with_prng(verylong, test_card_info)
